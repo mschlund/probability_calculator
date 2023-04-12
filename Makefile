@@ -1,4 +1,8 @@
 
+.PHONY: clean
+clean:
+	rm dist/*
+
 .PHONY: build
 build:
 	python3 -m build
