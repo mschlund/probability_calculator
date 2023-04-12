@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from .outcome import SimpleOutcome
 
 
 class DiscreteDensity:
@@ -9,6 +10,13 @@ class DiscreteDensity:
             self._outcomes.append(
                 SimpleOutcome(value=o["value"], prob=o["prob"])
             )
+
+    def exportOutcomes(self):
+        outcomes = []
+        for o in self._outcomes:
+            outcomes.append({"value": o.value, "prob": o.prob})
+
+        return outcomes
 
     def plot(self):
         X, Y = self._getPlotData()
@@ -40,7 +48,14 @@ class DiscreteDensity:
         return X, Y
 
 
-class SimpleOutcome:
-    def __init__(self, value, prob):
-        self.value = value
-        self.prob = prob
+class Dice(DiscreteDensity):
+    def __init__(self, n):
+        """
+        Generates a fair dice with n sides
+        """
+        prob = 1./n
+        outcomes = []
+        for i in range(1, n+1):
+            outcomes.append({"value": i, "prob": prob})
+
+        super().__init__(outcomes)
