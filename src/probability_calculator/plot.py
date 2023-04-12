@@ -1,9 +1,10 @@
+import math
 import matplotlib.pyplot as plt
 
 
-def plotDensity(density, precision=1e-6):
+def plotDensity(density, **args):
     outcomes = density.exportOutcomes()
-    X, Y = getPlotData(outcomes, precision)
+    X, Y = getPlotData(outcomes, **args)
 
     fig1, ax = plt.subplots()
     ax.plot(X, Y, "o")
@@ -12,7 +13,7 @@ def plotDensity(density, precision=1e-6):
     return fig1, ax
 
 
-def getPlotData(outcomes, precision=1e-6):
+def getPlotData(outcomes, merge_tol=1e-6):
     points = []
 
     for o in outcomes:
@@ -22,7 +23,7 @@ def getPlotData(outcomes, precision=1e-6):
     Y = []
     lastValue = None
     for value, prob in sorted(points):
-        if lastValue is not None and value - lastValue < precision:
+        if lastValue is not None and math.isclose(value, lastValue, abs_tol=merge_tol):
             # multiple times the same point -> add probabilities together
             Y[-1] += prob
         else:
