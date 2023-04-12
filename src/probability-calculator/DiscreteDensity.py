@@ -1,0 +1,3 @@
+
+class DiscreteDensity:
+    pass
