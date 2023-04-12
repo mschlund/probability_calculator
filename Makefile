@@ -6,3 +6,7 @@ build:
 .PHONY: upload
 upload:
 	python3 -m twine upload dist/*
+
+.PHONY: test
+test:
+	python3 -m pytest

@@ -1,5 +1,5 @@
 [project]
-name = "probability-calculator"
+name = "probability_calculator"
 version = "0.0.1"
 authors = [
   { name="Hendrik Roehm", email="git@roehm.ws" },
@@ -17,8 +17,14 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/HendrikRoehm/probability-calculator"
+"Homepage" = "https://github.com/HendrikRoehm/probability_calculator"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build]
+exclude = [
+  "/.vscode",
+  "/Makefile"
+]
