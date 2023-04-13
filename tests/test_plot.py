@@ -1,5 +1,5 @@
 from probability_calculator.density import DiscreteDensity
-from probability_calculator.plot import getPlotData
+from probability_calculator.plot import getPlotData, kernelDensityEstimation
 
 
 class TestPlot():
@@ -13,3 +13,10 @@ class TestPlot():
         X, Y = getPlotData(d.exportOutcomes())
         assert X == [1, 2, 3]
         assert Y == [1./3, 1./3, 1./3]
+
+    def test_kernelDensityEstimation(self):
+        X = [1, 2.25, 2.75, 3]
+        Y = [1., 2, 3, 4]
+        kdeX, kdeY = kernelDensityEstimation(X, Y, gridsize=4)
+        assert kdeX == [0.5, 1, 1.5, 2, 2.5, 3, 3.5]
+        assert kdeY == [0, 1, 0, 1.0, 2.5, 5.5, 0]
