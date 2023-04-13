@@ -1,3 +1,4 @@
+import math
 from typing import Optional, List
 from .outcome import Outcome, ExportedOutcome, DiskreteOutcome
 
@@ -10,6 +11,25 @@ class DiscreteDensity:
             self._outcomes.append(
                 DiskreteOutcome(value=o["value"], prob=o["prob"])
             )
+        
+        self.simplify()
+
+    def simplify(self):
+        """
+        simplifies the list of outcomes by combining elements
+        """
+        outcomes = sorted(self._outcomes, key=lambda o: o.getValue())
+        newOutcomes: List[Outcome] = []
+        lastOutcome: Optional[Outcome] = None
+        for o in outcomes:
+            if lastOutcome is not None and isinstance(lastOutcome, DiskreteOutcome) and isinstance(o, DiskreteOutcome) and math.isclose(lastOutcome.getValue(), o.getValue()):
+                # two DiskreteOutcomes with the same value -> join together
+                lastOutcome.addProb(o.getProb())
+            else:
+                newOutcomes.append(o)
+                lastOutcome = o
+        
+        self._outcomes = newOutcomes
 
     def exportOutcomes(self):
         outcomes: List[ExportedOutcome] = []

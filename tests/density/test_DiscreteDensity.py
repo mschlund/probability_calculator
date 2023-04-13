@@ -10,14 +10,18 @@ class TestDiscreteDensity():
             assert math.isclose(o["prob"], e["prob"])
 
     def test_exportOutcomes(self):
-        outcomes = [
+        d = DiscreteDensity(outcomes=[
             {"value": 1, "prob": 1./6},
             {"value": 2, "prob": 1./3},
             {"value": 1, "prob": 1./6},
             {"value": 3, "prob": 1./3}
+        ])
+        expected = [
+            {"value": 1, "prob": 1./3},
+            {"value": 2, "prob": 1./3},
+            {"value": 3, "prob": 1./3}
         ]
-        d = DiscreteDensity(outcomes=outcomes)
-        assert d.exportOutcomes() == outcomes
+        assert d.exportOutcomes() == expected
 
     def test_mul(self):
         d1 = DiscreteDensity(outcomes=[
@@ -32,8 +36,8 @@ class TestDiscreteDensity():
         outcomes = d.exportOutcomes()
         expected = [
             {"value": 5, "prob": 0.04},
-            {"value": 9, "prob": 0.08},
             {"value": 6, "prob": 0.12},
+            {"value": 9, "prob": 0.08},
             {"value": 10, "prob": 0.24}
         ]
         self.assertExportOutcomesEqual(outcomes, expected)
@@ -58,12 +62,8 @@ class TestDiscreteDensity():
         outcomes = d.exportOutcomes()
         expected = [
             {"value": 3, "prob": 0.125},
-            {"value": 4, "prob": 0.125},
-            {"value": 4, "prob": 0.125},
-            {"value": 5, "prob": 0.125},
-            {"value": 4, "prob": 0.125},
-            {"value": 5, "prob": 0.125},
-            {"value": 5, "prob": 0.125},
+            {"value": 4, "prob": 0.375},
+            {"value": 5, "prob": 0.375},
             {"value": 6, "prob": 0.125}
         ]
         self.assertExportOutcomesEqual(outcomes, expected)
