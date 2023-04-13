@@ -16,11 +16,11 @@ class DiscreteDensity:
 
         self.simplify()
 
-    def plot(self):
+    def plot(self, **kwargs):
         """
         plots the density with matplotlib
         """
-        return plotDensity(self)
+        return plotDensity(self, **kwargs)
 
     def simplify(self):
         """

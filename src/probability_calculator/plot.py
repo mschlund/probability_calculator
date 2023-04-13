@@ -1,14 +1,22 @@
+from typing import Optional, Literal
 import math
 import matplotlib.pyplot as plt
 
 
-def plotDensity(density, **args):
+def plotDensity(
+        density,
+        xscale: Literal["linear", "log"] = "linear",
+        yscale: Literal["linear", "log"] = "linear",
+        **args):
     outcomes = density.exportOutcomes()
     X, Y = getPlotData(outcomes, **args)
 
     fig1, ax = plt.subplots()
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
     ax.plot(X, Y, "o")
-    ax.set_ylim(bottom=0)
+    if yscale == "linear":
+        ax.set_ylim(bottom=0)
     plt.show()
     return fig1, ax
 
