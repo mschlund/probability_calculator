@@ -1,3 +1,4 @@
 /dist
 /.pytest_cache
 *.pyc
+*-checkpoint.ipynb

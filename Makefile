@@ -14,3 +14,7 @@ upload:
 .PHONY: test
 test:
 	python3 -m pytest -v
+
+.PHONY: generate_readme
+generate_readme:
+	jupyter nbconvert --to markdown --output-dir . docs/README.ipynb

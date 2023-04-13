@@ -1,18 +1,26 @@
 import math
 from typing import Optional, List
 from .outcome import Outcome, ExportedOutcome, DiskreteOutcome
+from .plot import plotDensity
 
 
 class DiscreteDensity:
-    def __init__(self, outcomes=[], _outcomes: Optional[List[Outcome]]=None):
-        self._outcomes: List[Outcome] = _outcomes if _outcomes is not None else []
+    def __init__(self, outcomes: List[ExportedOutcome] = [], _outcomes: Optional[List[Outcome]] = None):
+        self._outcomes: List[Outcome] = _outcomes if _outcomes is not None else [
+        ]
 
         for o in outcomes:
             self._outcomes.append(
                 DiskreteOutcome(value=o["value"], prob=o["prob"])
             )
-        
+
         self.simplify()
+
+    def plot(self):
+        """
+        plots the density with matplotlib
+        """
+        return plotDensity(self)
 
     def simplify(self):
         """
@@ -28,7 +36,7 @@ class DiscreteDensity:
             else:
                 newOutcomes.append(o)
                 lastOutcome = o
-        
+
         self._outcomes = newOutcomes
 
     def exportOutcomes(self):
