@@ -1,24 +1,51 @@
+from typing import Protocol, TypeVar, TypedDict, List
+from abc import abstractmethod
 import math
 
+ExportedOutcome = TypedDict("ExportedOutcome", {"value": float, "prob": float})
 
-class SimpleOutcome:
+T = TypeVar("T", covariant=True)
+
+
+class Outcome(Protocol[T]):
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __eq__(self, other: object) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __add__(self, other: object) -> T:
+        raise NotImplementedError
+
+    @abstractmethod
+    def export(self) -> List[ExportedOutcome]:
+        raise NotImplementedError
+
+
+class DiskreteOutcome:
     def __init__(self, value, prob):
         self.value = value
         self.prob = prob
 
+    def export(self) -> List[ExportedOutcome]:
+        return [{"value": self.value, "prob": self.prob}]
+
     def __str__(self) -> str:
-        return f"SimpleOutcome(value={self.value}, prob={self.prob})"
+        return f"DiskreteOutcome(value={self.value}, prob={self.prob})"
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, SimpleOutcome):
+        if isinstance(other, DiskreteOutcome):
             return math.isclose(self.value, other.value) and math.isclose(self.prob, other.prob)
 
         return False
 
     def __add__(self, other):
-        if isinstance(other, SimpleOutcome):
+        if isinstance(other, DiskreteOutcome):
             value = self.value + other.value
             prob = self.prob * other.prob
-            return SimpleOutcome(value, prob)
+            return DiskreteOutcome(value, prob)
 
         return NotImplemented

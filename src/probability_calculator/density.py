@@ -1,19 +1,20 @@
-from .outcome import SimpleOutcome
+from typing import Optional, List
+from .outcome import Outcome, ExportedOutcome, DiskreteOutcome
 
 
 class DiscreteDensity:
-    def __init__(self, outcomes=[], _outcomes=None):
-        self._outcomes = _outcomes if _outcomes is not None else []
+    def __init__(self, outcomes=[], _outcomes: Optional[List[Outcome]]=None):
+        self._outcomes: List[Outcome] = _outcomes if _outcomes is not None else []
 
         for o in outcomes:
             self._outcomes.append(
-                SimpleOutcome(value=o["value"], prob=o["prob"])
+                DiskreteOutcome(value=o["value"], prob=o["prob"])
             )
 
     def exportOutcomes(self):
-        outcomes = []
+        outcomes: List[ExportedOutcome] = []
         for o in self._outcomes:
-            outcomes.append({"value": o.value, "prob": o.prob})
+            outcomes.extend(o.export())
 
         return outcomes
 
