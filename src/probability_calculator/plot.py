@@ -1,6 +1,8 @@
 from typing import Optional, Tuple, List, Literal
 import math
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 from .outcome import ExportedOutcome
 
 
@@ -15,7 +17,8 @@ def plotDensity(
     X, Y = getPlotData(outcomes, **args)
 
     if kde:
-        X, Y = kernelDensityEstimation(X, Y, gridsize=gridsize, log_xscale=xscale == "log")
+        X, Y = kernelDensityEstimation(
+            X, Y, gridsize=gridsize)
 
     fig1, ax = plt.subplots()
     ax.set_xscale(xscale)
@@ -51,39 +54,18 @@ def getPlotData(outcomes: List[ExportedOutcome], merge_tol=1e-6) -> Tuple[List[f
 def kernelDensityEstimation(
         X: List[float],
         Y: List[float],
-        log_xscale: bool = False,
-        gridsize: int = 1000):
+        gridsize: int = 1000) -> Tuple[List[float], List[float]]:
     """
-    estimates the density by using a triangular kernel
+    estimates the density by using a trapez-like kernel
     """
 
-    gridsize = min(gridsize, len(X))
+    deltaX = (X[-1]-X[0])/gridsize
+    kdeX = np.linspace(X[0]-2*deltaX, X[-1]+2*deltaX, gridsize)
 
-    if log_xscale:
-        X = [math.log(x) for x in X]
+    # bw_method parameter optimized for the evenly spaced case
+    kernel = stats.gaussian_kde(
+        X, weights=Y, bw_method=(X[-1]-X[0])/max(1000, 5*len(X))
+    )
+    kdeY = kernel(kdeX)
 
-    deltaX = (X[-1] - X[0]) / gridsize
-    bandwidth = deltaX
-    currentX = X[0] - bandwidth
-    lastX = X[-1] + bandwidth
-
-    kdeX: List[float] = []
-    kdeY: List[Optional[float]] = []
-
-    while currentX <= lastX:
-        kdeX.append(currentX)
-        localY = 0
-        for i in range(len(X)):
-            diffX = abs(X[i] - currentX)
-            if diffX < bandwidth:
-                if not math.isclose(bandwidth, diffX, rel_tol=1e-13):
-                    # isclose keeps numerical issues around 0 away
-                    localY += (bandwidth-diffX) / bandwidth * Y[i]
-        kdeY.append(localY)
-
-        currentX += deltaX
-
-    if log_xscale:
-        kdeX = [math.exp(x) for x in kdeX]
-
-    return kdeX, kdeY
+    return kdeX.tolist(), kdeY.tolist()
