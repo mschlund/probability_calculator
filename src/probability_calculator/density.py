@@ -32,7 +32,7 @@ class DiscreteDensity:
         for o in outcomes:
             if lastOutcome is not None and isinstance(lastOutcome, DiskreteOutcome) and isinstance(o, DiskreteOutcome) and math.isclose(lastOutcome.getValue(), o.getValue()):
                 # two DiskreteOutcomes with the same value -> join together
-                lastOutcome.addProb(o.getProb())
+                newOutcomes[-1] = DiskreteOutcome(value=lastOutcome.getValue(), prob=lastOutcome.getProb()+o.getProb())
             else:
                 newOutcomes.append(o)
                 lastOutcome = o
