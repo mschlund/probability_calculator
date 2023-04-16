@@ -1,4 +1,4 @@
-name: python package with hatch
+name: python-package-with-hatch
 
 on: [push, pull_request]
 
