@@ -2,7 +2,7 @@ from typing import Protocol, TypeVar, TypedDict, List
 from abc import abstractmethod
 import math
 
-ExportedOutcome = TypedDict("ExportedOutcome", {"value": float, "probability": float})
+ExportedOutcome = TypedDict("ExportedOutcome", {"value": float, "p": float})
 
 T = TypeVar("T", covariant=True)
 
@@ -38,35 +38,35 @@ class Outcome(Protocol[T]):
 
 
 class DiscreteOutcome(Outcome):
-    def __init__(self, value: float, probability: float):
+    def __init__(self, value: float, p: float):
         self.value = value
-        self.probability = probability
+        self.p = p
 
     def export(self) -> List[ExportedOutcome]:
-        return [ExportedOutcome(value=self.value, probability=self.probability)]
+        return [ExportedOutcome(value=self.value, p=self.p)]
 
     def get_value(self):
         return self.value
 
     def get_probability(self):
-        return self.probability
+        return self.p
 
-    def add_probability(self, probability: float):
-        self.probability += probability
+    def add_probability(self, p: float):
+        self.p += p
 
     def __str__(self) -> str:
-        return f"DiscreteOutcome(value={self.value}, probability={self.probability})"
+        return f"DiscreteOutcome(value={self.value}, p={self.p})"
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, DiscreteOutcome):
-            return math.isclose(self.value, other.value) and math.isclose(self.probability, other.probability)
+            return math.isclose(self.value, other.value) and math.isclose(self.p, other.p)
 
         return False
 
     def __add__(self, other):
         if isinstance(other, DiscreteOutcome):
             value = self.value + other.value
-            probability = self.probability * other.probability
-            return DiscreteOutcome(value, probability)
+            p = self.p * other.p
+            return DiscreteOutcome(value, p)
 
         return NotImplemented

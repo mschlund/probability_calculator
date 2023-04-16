@@ -11,7 +11,7 @@ class DiscreteDensity:
         ]
 
         self._outcomes: List[Outcome] = self._outcomes + [DiscreteOutcome(
-            value=o["value"], probability=o["probability"]) for o in outcomes]
+            value=o["value"], p=o["p"]) for o in outcomes]
 
         # TODO: this _outcomes-parameter in the constructor is really strange...
         self.simplify()
@@ -67,7 +67,7 @@ class Dice(DiscreteDensity):
         """
         Generates a fair die with n sides
         """
-        probability = 1. / n  # TODO: rather use sympy?
-        outcomes = [ExportedOutcome(value=i, probability=probability) for i in range(1, n + 1)]
+        p = 1. / n  # TODO: rather use sympy?
+        outcomes = [ExportedOutcome(value=i, p=p) for i in range(1, n + 1)]
 
         super().__init__(outcomes)

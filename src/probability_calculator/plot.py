@@ -14,16 +14,16 @@ def plot_density(
         gridsize: int = 1000,
         **args):
     outcomes = density.exportOutcomes()
-    X, Y = get_plot_data(outcomes, **args)
+    x, y = get_plot_data(outcomes, **args)
 
     if kde:
-        X, Y = kernel_density_estimation(
-            X, Y, gridsize=gridsize)
+        x, y = kernel_density_estimation(
+            x, y, gridsize=gridsize)
 
     fig, ax = plt.subplots()
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
-    ax.plot(X, Y, "o" if not kde else "-")
+    ax.plot(x, y, "o" if not kde else "-")
     if yscale == "linear":
         ax.set_ylim(bottom=0)
     plt.show()
@@ -32,18 +32,18 @@ def plot_density(
 
 
 def get_plot_data(outcomes: List[ExportedOutcome], merge_tol=1e-6) -> Tuple[List[float], List[float]]:
-    points = [(o["value"], o["probability"]) for o in outcomes]
+    points = [(o["value"], o["p"]) for o in outcomes]
 
     x: List[float] = []
     y: List[float] = []
     last_value = None
-    for value, probability in sorted(points):
+    for value, p in sorted(points):
         if last_value is not None and math.isclose(value, last_value, abs_tol=merge_tol):
             # multiple times the same point -> add probabilities together
-            y[-1] += probability
+            y[-1] += p
         else:
             x.append(value)
-            y.append(probability)
+            y.append(p)
             last_value = value
 
     return x, y
@@ -57,13 +57,13 @@ def kernel_density_estimation(
     estimates the density by using a trapez-like kernel
     """
 
-    deltaX = (X[-1] - X[0]) / gridsize
-    kdeX = np.linspace(X[0] - deltaX, X[-1] + deltaX, gridsize + 3)
+    delta_x = (X[-1] - X[0]) / gridsize
+    kde_x = np.linspace(X[0] - delta_x, X[-1] + delta_x, gridsize + 3)
 
     # bw_method parameter optimized for the evenly spaced case
     kernel = sp.stats.gaussian_kde(
         X, weights=Y, bw_method=(X[-1] - X[0]) / max(1000, 5 * len(X))
     )
-    kdeY = kernel(kdeX)
+    kde_y = kernel(kde_x)
 
-    return kdeX.tolist(), kdeY.tolist()
+    return kde_x.tolist(), kde_y.tolist()
