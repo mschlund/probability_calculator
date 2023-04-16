@@ -60,7 +60,7 @@ def kernelDensityEstimation(
     """
 
     deltaX = (X[-1]-X[0])/gridsize
-    kdeX = np.linspace(X[0]-2*deltaX, X[-1]+2*deltaX, gridsize)
+    kdeX = np.linspace(X[0]-deltaX, X[-1]+deltaX, gridsize+3)
 
     # bw_method parameter optimized for the evenly spaced case
     kernel = stats.gaussian_kde(
