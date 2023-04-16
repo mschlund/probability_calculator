@@ -1,6 +1,8 @@
 from typing import Optional, Tuple, List, Literal
 import math
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 from .outcome import ExportedOutcome
 
 
@@ -15,7 +17,9 @@ def plot_density(
     X, Y = get_plot_data(outcomes, **args)
 
     if kde:
-        X, Y = kernel_density_estimation(X, Y, gridsize=gridsize, log_xscale=xscale == "log")
+        X, Y = kernelDensityEstimation(
+            X, Y, gridsize=gridsize)
+
 
     fig, ax = plt.subplots()
     ax.set_xscale(xscale)
@@ -49,39 +53,18 @@ def get_plot_data(outcomes: List[ExportedOutcome], merge_tol=1e-6) -> Tuple[List
 def kernel_density_estimation(
         X: List[float],
         Y: List[float],
-        log_xscale: bool = False,
-        gridsize: int = 1000):
+        gridsize: int = 1000) -> Tuple[List[float], List[float]]:
     """
-    estimates the density by using a triangular kernel
+    estimates the density by using a trapez-like kernel
     """
 
-    gridsize = min(gridsize, len(X))
+    deltaX = (X[-1]-X[0])/gridsize
+    kdeX = np.linspace(X[0]-deltaX, X[-1]+deltaX, gridsize+3)
 
-    if log_xscale:
-        X = [math.log(x) for x in X]
+    # bw_method parameter optimized for the evenly spaced case
+    kernel = stats.gaussian_kde(
+        X, weights=Y, bw_method=(X[-1]-X[0])/max(1000, 5*len(X))
+    )
+    kdeY = kernel(kdeX)
 
-    delta_x = (X[-1] - X[0]) / gridsize
-    bandwidth = delta_x
-    current_x = X[0] - bandwidth
-    last_x = X[-1] + bandwidth
-
-    kde_x: List[float] = []
-    kde_y: List[Optional[float]] = []
-
-    while current_x <= last_x:
-        kde_x.append(current_x)
-        local_y = 0
-        for i in range(len(X)):
-            diff_x = abs(X[i] - current_x)
-            if diff_x < bandwidth:
-                if not math.isclose(bandwidth, diff_x, rel_tol=1e-13):
-                    # isclose keeps numerical issues around 0 away
-                    local_y += (bandwidth - diff_x) / bandwidth * Y[i]
-        kde_y.append(local_y)
-
-        current_x += delta_x
-
-    if log_xscale:
-        kde_x = [math.exp(x) for x in kde_x]
-
-    return kde_x, kde_y
+    return kdeX.tolist(), kdeY.tolist()
