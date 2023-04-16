@@ -17,7 +17,7 @@ class TestCombinedOutcome():
 
     def test_simple(self):
         o = CombinedOutcome(
-            [DiscreteOutcome(1, 1./4), DiscreteOutcome(5, 3./4)])
+            [DiscreteOutcome(1, 1. / 4), DiscreteOutcome(5, 3. / 4)])
         assert str(
             o) == "CombinedOutcome(value1=1.0, p1=0.25, value2=5.0, p2=0.75)"
         assert o.export() == [
@@ -29,9 +29,9 @@ class TestCombinedOutcome():
 
     def test_complex(self):
         o = CombinedOutcome([
-            CombinedOutcome([DiscreteOutcome(1, 1./8),
-                            DiscreteOutcome(5, 3./8)]),
-            DiscreteOutcome(4, 1./4)
+            CombinedOutcome([DiscreteOutcome(1, 1. / 8),
+                            DiscreteOutcome(5, 3. / 8)]),
+            DiscreteOutcome(4, 1. / 4)
         ])
         assert self._exportIsClose(o.export(), [
             {"value": 2.5, "p": 0.1875},
@@ -39,6 +39,6 @@ class TestCombinedOutcome():
         ])
 
         # checking that min_value and max_value get submitted
-        o2 = CombinedOutcome([o, DiscreteOutcome(4, 1./4)])
+        o2 = CombinedOutcome([o, DiscreteOutcome(4, 1. / 4)])
         assert o2.min_value == o.min_value
         assert o2.max_value == o.max_value

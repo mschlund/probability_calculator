@@ -37,7 +37,7 @@ class DiscreteDensity:
                              o.get_value()):
                 # two DiscreteOutcomes with the same value -> join together
                 new_outcomes[-1] = DiscreteOutcome(
-                    value=last_outcome.get_value(), p=last_outcome.get_p()+o.get_p()
+                    value=last_outcome.get_value(), p=last_outcome.get_p() + o.get_p()
                 )
             else:
                 new_outcomes.append(o)

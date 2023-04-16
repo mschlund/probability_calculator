@@ -84,8 +84,8 @@ class CombinedOutcome(Outcome):
                 if min_value is None or min_value > e["value"]:
                     min_value = e["value"]
                 p += e["p"]
-                ev += e["p"]*e["value"]
-                evv += e["p"]*e["value"]**2
+                ev += e["p"] * e["value"]
+                evv += e["p"] * e["value"]**2
             if isinstance(o, CombinedOutcome):
                 if min_value is None or min_value > o.min_value:
                     min_value = o.min_value
@@ -99,15 +99,15 @@ class CombinedOutcome(Outcome):
         self.p: float = p
         self.value: float = ev / p
         f1: float = (max_value - self.value) / \
-            (max_value-min_value) if not math.isclose(min_value, max_value) else 0.5
+            (max_value - min_value) if not math.isclose(min_value, max_value) else 0.5
         p1: float = f1 * p
         p2: float = p - p1
-        t: float = math.sqrt((evv-ev**2/p)/f1/(1-f1))
+        t: float = math.sqrt((evv - ev**2 / p) / f1 / (1 - f1))
 
         self.p1: float = p1
         self.p2: float = p2
-        self.value1: float = self.value - (1-f1)*t
-        self.value2: float = self.value + f1*t
+        self.value1: float = self.value - (1 - f1) * t
+        self.value2: float = self.value + f1 * t
         self.min_value: float = min_value
         self.max_value: float = max_value
 
