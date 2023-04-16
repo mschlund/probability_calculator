@@ -1,8 +1,22 @@
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+![build-with-hatch](https://github.com/mschlund/probability_calculator/actions/workflows/python-package-with-hatch.yml/badge.svg)
+
+
 # probability_calculator
 
 Calculate with and analyze probability densities.
 
 ## Usage
+
+### Build
+
+The package uses [hatch](https://hatch.pypa.io/latest/install/) as a build-tool.
+Clone the repo and issue (make sure you have hatch installed!)
+
+```
+  hatch shell
+```
+This will create a virtual environment, install the package there, and activate the environment in a newly spawned shell.
 
 ### Initialization and plotting
 
@@ -15,8 +29,6 @@ from probability_calculator.density import Dice
 density = Dice(6) # initialize a fair dice with 6 sides
 fig, ax = density.plot() # plot the density using matplotlib
 ```
-
-
     
 ![png](README_files/README_1_0.png)
     
@@ -29,10 +41,10 @@ For the general case, the class `DiscreteDensity` can be used:
 from probability_calculator.density import DiscreteDensity
 
 density = DiscreteDensity(outcomes=[
-    { "value": 0, "prob": 0.2 },
-    { "value": 1, "prob": 0.3 },
-    { "value": 2.5, "prob": 0.1 },
-    { "value": 3, "prob": 0.4 },
+    { "value": 0, "probability": 0.2 },
+    { "value": 1, "probability": 0.3 },
+    { "value": 2.5, "probability": 0.1 },
+    { "value": 3, "probability": 0.4 },
 ]) # initialize a discrete density with 4 different outcomes
 fig, ax = density.plot() # plot the density using matplotlib
 ```
@@ -49,8 +61,8 @@ The discrete density of throwing a dice two times can be modelled by multiplying
 
 
 ```python
-densityForOneThrow = Dice(6)
-densitySumOfTwoThrows = densityForOneThrow * densityForOneThrow # same as densityForOneThrow**2
+density_for_one_throw = Dice(6)
+density_sum_of_two_throws = density_for_one_throw * density_for_one_throw # same as density_for_one_throw**2
 fig, ax = densitySumOfTwoThrows.plot()
 ```
 
