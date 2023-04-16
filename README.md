@@ -14,7 +14,7 @@ The package uses [hatch](https://hatch.pypa.io/latest/install/) as a build-tool.
 Clone the repo and issue (make sure you have hatch installed!)
 
 ```
-  hatch shell
+$ hatch shell
 ```
 This will create a virtual environment, install the package there, and activate the environment in a newly spawned shell.
 
@@ -63,7 +63,7 @@ The discrete density of throwing a dice two times can be modelled by multiplying
 ```python
 density_for_one_throw = Dice(6)
 density_sum_of_two_throws = density_for_one_throw * density_for_one_throw # same as density_for_one_throw**2
-fig, ax = densitySumOfTwoThrows.plot()
+fig, ax = density_sum_of_two_throws.plot()
 ```
 
 
