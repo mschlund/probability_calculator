@@ -16,6 +16,12 @@ classifiers = [
     "Development Status :: 3 - Alpha"
 ]
 
+
+dependencies = [
+  "matplotlib",
+  "autopep8"
+]
+
 [project.urls]
 "Homepage" = "https://github.com/HendrikRoehm/probability_calculator"
 

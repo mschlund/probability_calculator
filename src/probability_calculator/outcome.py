@@ -2,7 +2,7 @@ from typing import Protocol, TypeVar, TypedDict, List
 from abc import abstractmethod
 import math
 
-ExportedOutcome = TypedDict("ExportedOutcome", {"value": float, "prob": float})
+ExportedOutcome = TypedDict("ExportedOutcome", {"value": float, "probability": float})
 
 T = TypeVar("T", covariant=True)
 
@@ -21,11 +21,11 @@ class Outcome(Protocol[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def getValue(self) -> float:
+    def get_value(self) -> float:
         raise NotImplementedError
 
     @abstractmethod
-    def getProb(self) -> float:
+    def get_probability(self) -> float:
         raise NotImplementedError
 
     @abstractmethod
@@ -33,40 +33,40 @@ class Outcome(Protocol[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def addProb(self, prob: float) -> None:
+    def add_probability(self, prob: float) -> None:
         raise NotImplementedError
 
 
-class DiskreteOutcome(Outcome):
-    def __init__(self, value: float, prob: float):
+class DiscreteOutcome(Outcome):
+    def __init__(self, value: float, probability: float):
         self.value = value
-        self.prob = prob
+        self.probability = probability
 
     def export(self) -> List[ExportedOutcome]:
-        return [{"value": self.value, "prob": self.prob}]
+        return [ExportedOutcome(value=self.value, probability=self.probability)]
 
-    def getValue(self):
+    def get_value(self):
         return self.value
 
-    def getProb(self):
-        return self.prob
+    def get_probability(self):
+        return self.probability
 
-    def addProb(self, prob: float):
-        self.prob += prob
+    def add_probability(self, probability: float):
+        self.probability += probability
 
     def __str__(self) -> str:
-        return f"DiskreteOutcome(value={self.value}, prob={self.prob})"
+        return f"DiscreteOutcome(value={self.value}, probability={self.probability})"
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, DiskreteOutcome):
-            return math.isclose(self.value, other.value) and math.isclose(self.prob, other.prob)
+        if isinstance(other, DiscreteOutcome):
+            return math.isclose(self.value, other.value) and math.isclose(self.probability, other.probability)
 
         return False
 
     def __add__(self, other):
-        if isinstance(other, DiskreteOutcome):
+        if isinstance(other, DiscreteOutcome):
             value = self.value + other.value
-            prob = self.prob * other.prob
-            return DiskreteOutcome(value, prob)
+            probability = self.probability * other.probability
+            return DiscreteOutcome(value, probability)
 
         return NotImplemented

@@ -1,7 +1,8 @@
 import math
+import itertools
 from typing import Optional, List
-from .outcome import Outcome, ExportedOutcome, DiskreteOutcome
-from .plot import plotDensity
+from .outcome import Outcome, ExportedOutcome, DiscreteOutcome
+from .plot import plot_density
 
 
 class DiscreteDensity:
@@ -9,49 +10,46 @@ class DiscreteDensity:
         self._outcomes: List[Outcome] = _outcomes if _outcomes is not None else [
         ]
 
-        for o in outcomes:
-            self._outcomes.append(
-                DiskreteOutcome(value=o["value"], prob=o["prob"])
-            )
+        self._outcomes: List[Outcome] = self._outcomes + [DiscreteOutcome(
+            value=o["value"], probability=o["probability"]) for o in outcomes]
 
+        # TODO: this _outcomes-parameter in the constructor is really strange...
         self.simplify()
 
     def plot(self, **kwargs):
         """
         plots the density with matplotlib
         """
-        return plotDensity(self, **kwargs)
+        return plot_density(self, **kwargs)
 
     def simplify(self):
         """
         simplifies the list of outcomes by combining elements
         """
-        outcomes = sorted(self._outcomes, key=lambda o: o.getValue())
-        newOutcomes: List[Outcome] = []
-        lastOutcome: Optional[Outcome] = None
+        outcomes = sorted(self._outcomes, key=lambda o: o.get_value())
+        new_outcomes: List[Outcome] = []
+        last_outcome: Optional[Outcome] = None
         for o in outcomes:
-            if lastOutcome is not None and isinstance(lastOutcome, DiskreteOutcome) and isinstance(o, DiskreteOutcome) and math.isclose(lastOutcome.getValue(), o.getValue()):
-                # two DiskreteOutcomes with the same value -> join together
-                lastOutcome.addProb(o.getProb())
+            if last_outcome is not None and \
+                isinstance(last_outcome, DiscreteOutcome) and \
+                isinstance(o, DiscreteOutcome) and \
+                math.isclose(last_outcome.get_value(),
+                             o.get_value()):
+                # two DiscreteOutcomes with the same value -> join together
+                last_outcome.add_probability(o.get_probability())
             else:
-                newOutcomes.append(o)
-                lastOutcome = o
+                new_outcomes.append(o)
+                last_outcome = o
 
-        self._outcomes = newOutcomes
+        self._outcomes = new_outcomes
 
-    def exportOutcomes(self):
-        outcomes: List[ExportedOutcome] = []
-        for o in self._outcomes:
-            outcomes.extend(o.export())
-
+    def export_outcomes(self):
+        outcomes: List[ExportedOutcome] = list(
+            itertools.chain(*[o.export() for o in self._outcomes]))
         return outcomes
 
     def __mul__(self, other):
-        outcomes = []
-        for o1 in self._outcomes:
-            for o2 in other._outcomes:
-                outcomes.append(o1+o2)
-
+        outcomes = [o1 + o2 for o1 in self._outcomes for o2 in other._outcomes]
         return DiscreteDensity(_outcomes=outcomes)
 
     def __pow__(self, other):
@@ -59,7 +57,7 @@ class DiscreteDensity:
             if other == 1:
                 return self
             elif other > 1:
-                return self * (self**(other-1))
+                return self * (self**(other - 1))
 
         return NotImplemented
 
@@ -67,11 +65,9 @@ class DiscreteDensity:
 class Dice(DiscreteDensity):
     def __init__(self, n):
         """
-        Generates a fair dice with n sides
+        Generates a fair die with n sides
         """
-        prob = 1./n
-        outcomes = []
-        for i in range(1, n+1):
-            outcomes.append({"value": i, "prob": prob})
+        probability = 1. / n  # TODO: rather use sympy?
+        outcomes = [ExportedOutcome(value=i, probability=probability) for i in range(1, n + 1)]
 
         super().__init__(outcomes)

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from .outcome import ExportedOutcome
 
 
-def plotDensity(
+def plot_density(
         density,
         xscale: Literal["linear", "log"] = "linear",
         yscale: Literal["linear", "log"] = "linear",
@@ -12,43 +12,41 @@ def plotDensity(
         gridsize: int = 1000,
         **args):
     outcomes = density.exportOutcomes()
-    X, Y = getPlotData(outcomes, **args)
+    X, Y = get_plot_data(outcomes, **args)
 
     if kde:
-        X, Y = kernelDensityEstimation(X, Y, gridsize=gridsize, log_xscale=xscale == "log")
+        X, Y = kernel_density_estimation(X, Y, gridsize=gridsize, log_xscale=xscale == "log")
 
-    fig1, ax = plt.subplots()
+    fig, ax = plt.subplots()
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     ax.plot(X, Y, "o" if not kde else "-")
     if yscale == "linear":
         ax.set_ylim(bottom=0)
     plt.show()
-    return fig1, ax
+    plt.close()
+    return fig, ax
 
 
-def getPlotData(outcomes: List[ExportedOutcome], merge_tol=1e-6) -> Tuple[List[float], List[float]]:
-    points = []
+def get_plot_data(outcomes: List[ExportedOutcome], merge_tol=1e-6) -> Tuple[List[float], List[float]]:
+    points = [(o["value"], o["probability"]) for o in outcomes]
 
-    for o in outcomes:
-        points.append((o["value"], o["prob"]))
-
-    X: List[float] = []
-    Y: List[float] = []
-    lastValue = None
-    for value, prob in sorted(points):
-        if lastValue is not None and math.isclose(value, lastValue, abs_tol=merge_tol):
+    x: List[float] = []
+    y: List[float] = []
+    last_value = None
+    for value, probability in sorted(points):
+        if last_value is not None and math.isclose(value, last_value, abs_tol=merge_tol):
             # multiple times the same point -> add probabilities together
-            Y[-1] += prob
+            y[-1] += probability
         else:
-            X.append(value)
-            Y.append(prob)
-            lastValue = value
+            x.append(value)
+            y.append(probability)
+            last_value = value
 
-    return X, Y
+    return x, y
 
 
-def kernelDensityEstimation(
+def kernel_density_estimation(
         X: List[float],
         Y: List[float],
         log_xscale: bool = False,
@@ -62,28 +60,28 @@ def kernelDensityEstimation(
     if log_xscale:
         X = [math.log(x) for x in X]
 
-    deltaX = (X[-1] - X[0]) / gridsize
-    bandwidth = deltaX
-    currentX = X[0] - bandwidth
-    lastX = X[-1] + bandwidth
+    delta_x = (X[-1] - X[0]) / gridsize
+    bandwidth = delta_x
+    current_x = X[0] - bandwidth
+    last_x = X[-1] + bandwidth
 
-    kdeX: List[float] = []
-    kdeY: List[Optional[float]] = []
+    kde_x: List[float] = []
+    kde_y: List[Optional[float]] = []
 
-    while currentX <= lastX:
-        kdeX.append(currentX)
-        localY = 0
+    while current_x <= last_x:
+        kde_x.append(current_x)
+        local_y = 0
         for i in range(len(X)):
-            diffX = abs(X[i] - currentX)
-            if diffX < bandwidth:
-                if not math.isclose(bandwidth, diffX, rel_tol=1e-13):
+            diff_x = abs(X[i] - current_x)
+            if diff_x < bandwidth:
+                if not math.isclose(bandwidth, diff_x, rel_tol=1e-13):
                     # isclose keeps numerical issues around 0 away
-                    localY += (bandwidth-diffX) / bandwidth * Y[i]
-        kdeY.append(localY)
+                    local_y += (bandwidth - diff_x) / bandwidth * Y[i]
+        kde_y.append(local_y)
 
-        currentX += deltaX
+        current_x += delta_x
 
     if log_xscale:
-        kdeX = [math.exp(x) for x in kdeX]
+        kde_x = [math.exp(x) for x in kde_x]
 
-    return kdeX, kdeY
+    return kde_x, kde_y
