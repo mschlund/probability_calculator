@@ -19,7 +19,8 @@ classifiers = [
 
 dependencies = [
   "matplotlib",
-  "autopep8"
+  "scipy",
+  "autopep8",
 ]
 
 [project.urls]

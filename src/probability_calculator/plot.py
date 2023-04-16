@@ -2,7 +2,7 @@ from typing import Optional, Tuple, List, Literal
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
+import scipy as sp
 from .outcome import ExportedOutcome
 
 
@@ -17,9 +17,8 @@ def plot_density(
     X, Y = get_plot_data(outcomes, **args)
 
     if kde:
-        X, Y = kernelDensityEstimation(
+        X, Y = kernel_density_estimation(
             X, Y, gridsize=gridsize)
-
 
     fig, ax = plt.subplots()
     ax.set_xscale(xscale)
@@ -58,12 +57,12 @@ def kernel_density_estimation(
     estimates the density by using a trapez-like kernel
     """
 
-    deltaX = (X[-1]-X[0])/gridsize
-    kdeX = np.linspace(X[0]-deltaX, X[-1]+deltaX, gridsize+3)
+    deltaX = (X[-1] - X[0]) / gridsize
+    kdeX = np.linspace(X[0] - deltaX, X[-1] + deltaX, gridsize + 3)
 
     # bw_method parameter optimized for the evenly spaced case
-    kernel = stats.gaussian_kde(
-        X, weights=Y, bw_method=(X[-1]-X[0])/max(1000, 5*len(X))
+    kernel = sp.stats.gaussian_kde(
+        X, weights=Y, bw_method=(X[-1] - X[0]) / max(1000, 5 * len(X))
     )
     kdeY = kernel(kdeX)
 

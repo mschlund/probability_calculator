@@ -18,6 +18,6 @@ class TestPlot(unittest.TestCase):
     def test_kernelDensityEstimation(self):
         X = [1, 2.25, 2.75, 3]
         Y = [1., 2, 3, 4]
-        kdeX, kdeY = kernel_density_estimation(X, Y, gridsize=4)
-        assert kdeX == [0.5, 1, 1.5, 2, 2.5, 3, 3.5]
-        assert kdeY == [0.0, 28.18432582492507, 0.0, 0.0, 0.0, 112.73730329970029, 0.0]
+        kde_x, kde_y = kernel_density_estimation(X, Y, gridsize=4)
+        assert kde_x == [0.5, 1, 1.5, 2, 2.5, 3, 3.5]
+        assert kde_y == [0.0, 28.18432582492507, 0.0, 0.0, 0.0, 112.73730329970029, 0.0]
