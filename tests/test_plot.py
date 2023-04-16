@@ -20,4 +20,5 @@ class TestPlot(unittest.TestCase):
         y = [1., 2, 3, 4]
         kde_x, kde_y = kernel_density_estimation(x, y, gridsize=4)
         assert kde_x == [0.5, 1, 1.5, 2, 2.5, 3, 3.5]
-        assert kde_y == [0.0, 28.18432582492507, 0.0, 0.0, 0.0, 112.73730329970029, 0.0]
+        assert kde_y == [0.0, 28.18432582492507,
+                         0.0, 0.0, 0.0, 112.73730329970029, 0.0]

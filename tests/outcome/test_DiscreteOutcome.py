@@ -4,7 +4,7 @@ from probability_calculator.outcome import DiscreteOutcome
 class TestDiscreteOutcome():
     def test_str(self):
         o = DiscreteOutcome(1, 1. / 2)
-        assert str(o) == "DiscreteOutcome(value=1, probability=0.5)"
+        assert str(o) == "DiscreteOutcome(value=1, p=0.5)"
 
     def test_eq(self):
         assert DiscreteOutcome(1, 1. / 2) == DiscreteOutcome(1, 1. / 2 + 1e-10)

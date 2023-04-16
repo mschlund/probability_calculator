@@ -13,7 +13,7 @@ upload:
 
 .PHONY: test
 test:
-	python3 -m pytest -v
+	python3 -m unittest discover -s ./tests -p test_*.py
 
 .PHONY: generate_readme
 generate_readme:
