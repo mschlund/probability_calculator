@@ -38,7 +38,7 @@ class TestCombinedOutcome():
             {"value": 4.5, "p": 0.5625},
         ])
 
-        # checking that minv and maxv get submitted
+        # checking that min_value and max_value get submitted
         o2 = CombinedOutcome([o, DiscreteOutcome(4, 1./4)])
-        assert o2.minv == o.minv
-        assert o2.maxv == o.maxv
+        assert o2.min_value == o.min_value
+        assert o2.max_value == o.max_value

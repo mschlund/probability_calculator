@@ -71,36 +71,35 @@ class DiscreteOutcome(Outcome):
 class CombinedOutcome(Outcome):
 
     def __init__(self, outcomes: List[Outcome]):
-        # calculate total maxv, minv, p, ev, and evv of given outcomes
+        # calculate total max_value, min_value, p, ev, and evv of given outcomes
         p: float = 0.
         ev: float = 0.
         evv: float = 0.
-        maxv: Optional[float] = None
-        minv: Optional[float] = None
+        max_value: Optional[float] = None
+        min_value: Optional[float] = None
         for o in outcomes:
             for e in o.export():
-                if maxv is None or maxv < e["value"]:
-                    maxv = e["value"]
-                if minv is None or minv > e["value"]:
-                    minv = e["value"]
+                if max_value is None or max_value < e["value"]:
+                    max_value = e["value"]
+                if min_value is None or min_value > e["value"]:
+                    min_value = e["value"]
                 p += e["p"]
                 ev += e["p"]*e["value"]
                 evv += e["p"]*e["value"]**2
             if isinstance(o, CombinedOutcome):
-                if minv is None or minv > o.minv:
-                    minv = o.minv
-                if maxv is None or maxv < o.maxv:
-                    maxv = o.maxv
+                if min_value is None or min_value > o.min_value:
+                    min_value = o.min_value
+                if max_value is None or max_value < o.max_value:
+                    max_value = o.max_value
 
-        if minv is None or maxv is None:
+        if min_value is None or max_value is None:
             raise Exception("No outcomes found to combine")
 
         # generate two outcomes which represent the same p, ev, and evv
         self.p: float = p
         self.value: float = ev / p
-        f1: float = (maxv - self.value) / \
-            (maxv-minv) if not math.isclose(minv, maxv) else 0.5
-        print(minv, maxv, f1)
+        f1: float = (max_value - self.value) / \
+            (max_value-min_value) if not math.isclose(min_value, max_value) else 0.5
         p1: float = f1 * p
         p2: float = p - p1
         t: float = math.sqrt((evv-ev**2/p)/f1/(1-f1))
@@ -109,8 +108,8 @@ class CombinedOutcome(Outcome):
         self.p2: float = p2
         self.value1: float = self.value - (1-f1)*t
         self.value2: float = self.value + f1*t
-        self.minv: float = minv
-        self.maxv: float = maxv
+        self.min_value: float = min_value
+        self.max_value: float = max_value
 
     def export(self) -> List[ExportedOutcome]:
         return [
